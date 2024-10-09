@@ -1,0 +1,14 @@
+name: flake-check
+on:
+  workflow_call:
+  push:
+    branches: ["main", "dev", "action/*"]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Check
+        run: nix flake check --all-systems

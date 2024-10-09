@@ -1,0 +1,23 @@
+name: flake-update
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: current-date
+        run: |
+            now=$(date +'%Y-%m-%d')
+            echo CUR_DATE=$now >> $GITHUB_ENV 
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - uses: DeterminateSystems/update-flake-lock@main
+        with:
+          token: ${{ secrets.GH_ACTION_FLAKE_UPDATE }}
+          branch: "action/flake-update-${{ env.CUR_DATE }}"
+          pr-title: "Update flake.lock"
