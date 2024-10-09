@@ -2,14 +2,14 @@ name: publish
 on:
   push:
     tags:
-      - "v?[0-9]+.[0-9]+.[0-9]+*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
   workflow_dispatch:
     inputs:
       tag:
         type: "string"
         required: true
         description: "The existing tag to publish to FlakeHub"
-		
+
 jobs:
   check-flake:
     uses: ./.github/workflows/flake-check.yml
