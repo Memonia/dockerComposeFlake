@@ -9,7 +9,7 @@ on:
         type: "string"
         required: true
         description: "The existing tag to publish to FlakeHub"
-		
+
 jobs:
   check-flake:
     uses: ./.github/workflows/flake-check.yml
