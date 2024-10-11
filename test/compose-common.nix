@@ -5,7 +5,7 @@ let
 	echoData = "Hi!";
 	vmBaseImageFile = "/tmp/dockerCompose/alpine";
 
-	# The VM has no internet access, so we build the test outside image and transfer it to the VM
+	# The VM has no internet access, so we build the test image outside and transfer it there
 	testDockerImage = pkgs.dockerTools.buildImage {
 		tag = "local";
 		name = "echo";
