@@ -17,7 +17,7 @@ in
 	tests = {
 		"${testNames.composeYaml}" = common.makeTest {
 			name = testNames.composeYaml;
-			dockerComposeConfig = {
+			stackConfig = {
 				isJsonnetFile = false;
 				composeFilePath = ./service/compose/compose-yaml.yaml;
 			};
@@ -25,7 +25,7 @@ in
 
 		"${testNames.composeJsonnet}" = common.makeTest {
 			name = testNames.composeJsonnet;
-			dockerComposeConfig = {
+			stackConfig = {
 				isJsonnetFile = true;
 				composeFilePath = ./service/compose/compose-jsonnet.jsonnet;
 			};

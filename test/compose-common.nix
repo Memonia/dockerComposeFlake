@@ -32,7 +32,7 @@ let
 	};
 in
 {	
-	makeTest = { name, dockerComposeConfig, ... }: pkgs.nixosTest {		
+	makeTest = { name, stackConfig, dockerComposeConfig ? { }, ... }: pkgs.nixosTest {		
 		name = name;
 		globalTimeout = 600;
 		nodes.node = { ... }: {
@@ -40,15 +40,16 @@ in
 
 			config.virtualisation = {
 				docker.enable = true;
-				writableStore = true;
 			};
 
-			config.dockerCompose."${name}" = dockerComposeConfig // {
-				enable = true;
-				environment = {
-					LISTEN_PORT = toString echoPort;
-				};
-			};
+            config.dockerCompose = dockerComposeConfig // {
+                stacks."${name}" = stackConfig // {
+                    enable = true;
+                    environment = {
+                        LISTEN_PORT = toString echoPort;
+                    };
+                };
+            };
 		};
 
 		testScript = ''
