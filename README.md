@@ -1,7 +1,7 @@
 ## About
 [![FlakeHub](https://img.shields.io/endpoint?url=https://flakehub.com/f/Memonia/dockerComposeFlake/badge)](https://flakehub.com/flake/Memonia/dockerComposeFlake)
 
-This flake is a convenient wrapper around `docker compose up` project deployment, which additionally supports `jsonnet` compose files.
+This flake is a convenient wrapper around `docker compose up` stack deployment, which additionally supports `jsonnet` compose files.
 
 ## Installation
 Add this flake to your `flake.nix`. First `#1`, specify dockerCompose flake as an input, then `#2` make it available under the `config` set.
@@ -31,55 +31,55 @@ Add this flake to your `flake.nix`. First `#1`, specify dockerCompose flake as a
 ```
 
 ## How to use it
-The snippet below will create a systemd service `myComposeProject.service`, which runs `docker compose up` with a file specified in `composeFilePath`.
+The snippet below will create a systemd service `myComposeStack.service`, which runs `docker compose up` with a file specified in `composeFilePath`.
 
 ```nix
-config.dockerCompose."myComposeProject" = {
+config.dockerCompose.stacks."myComposeStack" = {
     enable = true;
-    composeFilePath = ./myComposeProject.yaml;
+    composeFilePath = ./myComposeStack.yaml;
 };
 ```
 
-In order to use a `jsonnet` file for your compose project, modify the configuration like so: 
+In order to use a `jsonnet` file for your compose stack, modify the configuration like so: 
 
 ```nix
-config.dockerCompose."myComposeProject" = {
+config.dockerCompose.stacks."myComposeStack" = {
     enable = true;
     isJsonnetFile = true;
-    composeFilePath = ./myComposeProject.jsonnet;
+    composeFilePath = ./myComposeStack.jsonnet;
 };
 ```
 
-Now, before starting the project, the `jsonnet` file will be converted to `json`, which docker supports.
+Now, before starting the stack, the `jsonnet` file will be converted to `json`, which docker supports.
 
 ## Tips
-Suppose, your `myComposeProject.yaml` builds one of its services like so:
+Suppose, your `myComposeStack.yaml` builds one of its services like so:
 
 ```yaml
-name: myComposeProject
+name: myComposeStack
 services:
   app:
     build:
-      context: ./myComposeProjectDirectory
+      context: ./myComposeStackDirectory
       dockerfile: app.Dockerfile
 ```
 
-Depending on where the compose project directory is located, the files may not be transferred to the store together with the compose file. To ensure it works properly, you may change your `nix` configuration like so:
+Depending on where the compose stack directory is located, the files may not be transferred to the store together with the compose file. To ensure it works properly, you may change your `nix` configuration like so:
 
 ```nix
-config.dockerCompose."myComposeProject" = {
+config.dockerCompose.stacks."myComposeStack" = {
     enable = true;
-    composeFilePath = ./myComposeProject.yaml;
+    composeFilePath = ./myComposeStack.yaml;
     environment = [
-        COMPOSE_CONTEXT = ./myComposeProjectDirectory;
+        COMPOSE_CONTEXT = ./myComposeStackDirectory;
     ];
 };
 ```
 
-And `myComposeProject.yaml` like so:
+And `myComposeStack.yaml` like so:
 
 ```yaml
-name: myComposeProject
+name: myComposeStack
 services:
   app:
     build:
@@ -87,4 +87,4 @@ services:
       dockerfile: app.Dockerfile
 ```
 
-Now, because the extra directory is referenced within the `nix` configuration, it will be transferred to the store together with `myComposeProject.yaml`.
+Now, because the extra directory is referenced within the `nix` configuration, it will be transferred to the store together with `myComposeStack.yaml`.

@@ -1,5 +1,5 @@
 {
-	description = "A wrapper for running docker compose projects as systemd services";
+	description = "A wrapper for running docker compose stacks as systemd services";
 	inputs = {
 		nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1.0";
 	};
