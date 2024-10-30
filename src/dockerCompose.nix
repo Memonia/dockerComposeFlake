@@ -53,25 +53,27 @@
 	
 	config = lib.mkIf (config.dockerCompose.stacks != { }) {
 		systemd.services = lib.mapAttrs (name: composeConfig:
-		let	   
-			_out = "./out/${builtins.baseNameOf composeConfig.composeFilePath}.json";
+		let
+			_jnet = "${config.dockerCompose.jsonnetPackage}/bin/jsonnet";
+			_docker = "${config.dockerCompose.dockerPackage}/bin/docker";
+			
+			_jsonnetCommandOutputFile = "${builtins.baseNameOf composeConfig.composeFilePath}.json";
+			_jsonnetCommand = pkgs.runCommand "${name}-jsonnet-result" { } ''
+				mkdir $out
+				${_jnet} --output-file $out/${_jsonnetCommandOutputFile} ${composeConfig.composeFilePath}
+			'';
+
 			_upFlags = "${lib.strings.concatStringsSep " " composeConfig.extraUpFlags}"; 
 			_composeFlags = "${lib.strings.concatStringsSep " " composeConfig.extraComposeFlags}";
-			_docker = "${config.dockerCompose.dockerPackage}/bin/docker";
-			_jsonnet = "${config.dockerCompose.jsonnetPackage}/bin/jsonnet";
-
-			script = 
+			_file = 
 				if composeConfig.isJsonnetFile 
-					then ''
-						mkdir --parents ${builtins.dirOf _out}
-						${_jsonnet} --output-file ${_out} ${composeConfig.composeFilePath}
-						${_docker} compose --file ${_out} ${_composeFlags} up ${_upFlags}
-					''
-
-					else ''
-						${_docker} compose --file ${composeConfig.composeFilePath} ${_composeFlags} up ${_upFlags}
-					'' 
-				;
+					then "${_jsonnetCommand}/${_jsonnetCommandOutputFile}" 
+					else "${composeConfig.composeFilePath}"
+			;
+		
+			script = ''
+				${_docker} compose --file ${_file} ${_composeFlags} up ${_upFlags}
+			'';
 		in
 		{
 			after = ["docker.service" "docker.socket"];
