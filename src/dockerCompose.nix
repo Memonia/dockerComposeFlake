@@ -9,7 +9,7 @@
 			description = "";
 			type = lib.types.attrsOf (lib.types.submodule {
 				options = {
-					enable = lib.mkEnableOption "a docker compose stack";
+					enable = lib.mkEnableOption "a docker compose project";
 					isJsonnetFile = lib.mkOption {
 						type = lib.types.bool;
 						default = false;
