@@ -2,7 +2,7 @@ name: flake-check
 on:
   workflow_call:
   push:
-    branches: ["main", "dev", "action/*"]
+    branches: ["main", "dev*", "action/*"]
 
 jobs:
   check:
